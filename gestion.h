@@ -1,7 +1,7 @@
 #ifndef GESTION_H
 #define GESTION_H
-#include "convention.h"
 #include <QDialog>
+#include"employe.h"
 
 namespace Ui {
 class gestion;
@@ -14,20 +14,27 @@ class gestion : public QDialog
 public:
     explicit gestion(QWidget *parent = nullptr);
     ~gestion();
-    void afficherC();
 
 private slots:
     void on_pb_ajouter_clicked();
 
     void on_pb_supprimer_clicked();
 
-    void on_pushButton_clicked();
+    void on_update_clicked();
 
-    void on_pushButton_2_clicked();
+
+
+    void on_search_clicked();
+
+
+
+
+    void on_tabemploye_activated(const QModelIndex &index);
 
 private:
     Ui::gestion *ui;
-    Convention tmpConvention;
+    Employe tmpemploye;
+
 
 };
 
