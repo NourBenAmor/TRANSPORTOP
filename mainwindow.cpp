@@ -1,117 +1,137 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "trajet.h"
-#include <QMessageBox>
+#include<QSqlQueryModel>
+#include"promotion.h"
+#include "connexion.h"
+#include<QMessageBox>
 #include<QDebug>
-#include <QtDebug>
-#include<qdebug.h>
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include <QTextBrowser>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-ui->setupUi(this);
-ui->tabtrajet->setModel(tmptrajet.afficher());
-
+    ui->setupUi(this);
+    //QPixmap pix(":/img/img/photo-1544620347-c4fd4a3d5957.jpg");
+    //ui->label_5->setPixmap(pix);
 }
-
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::on_pb_ajouter_clicked()
+
+void MainWindow::on_tableView_activated(const QModelIndex &index)
 {
-    int num = ui->lineEdit_num->text().toInt();
-    QString stationa= ui->lineEdit_stationa->text();
-    QString stationd= ui->lineEdit_stationd->text();
-    QString datea= ui->lineEdit_datea->text();
-    QString dated= ui->lineEdit_dated->text();
-
-  Trajet e(num,stationa,stationd,datea,dated);
-  bool test=e.ajouter();
-  if(test)
-{ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-      ui->tablea->setModel(tmptrajet.afficher2());//refresh
-
-QMessageBox::information(nullptr, QObject::tr("Ajouter un trajet"),
-                  QObject::tr("trajet ajouté.\n"
-                              "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-  else
-      QMessageBox::critical(nullptr, QObject::tr("Ajouter un trajet"),
-                  QObject::tr("Erreur !.\n"
-                              "Click Cancel to exit."), QMessageBox::Cancel);
+    QString id=ui->tableView->model()->data(index).toString();
+    QSqlQuery q;
+    q.prepare("SELECT * FROM promotion WHERE ID=?");
+    q.addBindValue(id);
+            if(q.exec())
+    {
+        while(q.next())
+        {
+            ui->lineEdit->setText(q.value(0).toString());
+            ui->lineEdit_2->setText(q.value(1).toString());
+            ui->dateEdit->setDate(q.value(2).toDate());
+            ui->dateEdit_2->setDate(q.value(3).toDate());
+            ui->lineEdit_4->setText(q.value(4).toString());
+         }
 
 
-}
-
-void MainWindow::on_pb_supprimer_clicked()
-{
-int num = ui->lineEdit_numt->text().toInt();
-bool test=tmptrajet.supprimer(num);
-if(test)
-{ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-    ui->tablea->setModel(tmptrajet.afficher2());//refresh
-
-    QMessageBox::information(nullptr, QObject::tr("Supprimer un trajet"),
-                QObject::tr("trajet supprimé.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-else
-    QMessageBox::critical(nullptr, QObject::tr("Supprimer un trajet"),
-                QObject::tr("Erreur !.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-
-}
-
-
-void MainWindow::on_pb_modifier_clicked()
-{
-    int num = ui->lineEdit_numm->text().toInt();
-    QString stationa= ui->lineEdit_stationam->text();
-    QString stationd= ui->lineEdit_stationdm->text();
-    QString datea= ui->lineEdit_dateam->text();
-    QString dated= ui->lineEdit_datedm->text();
-bool test=tmptrajet.modifier(num,stationa,stationd,datea,dated);
-
-if (test)
-  {  ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-    ui->tablea->setModel(tmptrajet.afficher2());//refresh
-
-QMessageBox::information(nullptr, QObject::tr("modifier un trajet"),
-                QObject::tr("trajet modidier.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-else
-    QMessageBox::critical(nullptr, QObject::tr("modifier un trajet"),
-                QObject::tr("Erreur !.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
+    }
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->tablea->setModel(tmptrajet.afficher2());
+    int id= ui->lineEdit->text().toInt();
+    QString nom=ui->lineEdit_2->text();
+    QString contenu=ui->lineEdit_4->text();
+    QString datedebut=ui->dateEdit->date().toString();
+    QString datefin=ui->dateEdit->date().toString();
+    if(ui->dateEdit->date() < ui->dateEdit_2->date())
+    {
+    Promotion e(id,nom,datedebut,datefin,contenu);
+    bool test=e.ajouterpromotion();
+    if (test)
+    {
+        ui->tableView->setModel(tmppromo.consulter());
+        QMessageBox::information(nullptr,QObject::tr("Ajout"),QObject::tr("Promotion ajouté"),QMessageBox::Ok);
+    }
+    else
+    {
+        QMessageBox::critical(nullptr,QObject::tr("Ajout"),QObject::tr("ID existe"),QMessageBox::Ok);
+
+
+
+    }
+
+
+    }
+    else
+       QMessageBox::critical(nullptr,QObject::tr("DAte "),QObject::tr("Impossible"),QMessageBox::Ok);
+
 
 
 }
 
+void MainWindow::on_pushButton_2_clicked()
+{
+    QString id= ui->lineEdit->text();
+    QString nom=ui->lineEdit_2->text();
+    QString datedebut=ui->dateEdit->date().toString();
+    QString datefin=ui->dateEdit_2->date().toString();
+    QString contenu=ui->lineEdit_4->text();
+
+    bool test=tmppromo.modifierpromotion(nom,datedebut,datefin,id,contenu);
+    if (test)
+    {
+        ui->tableView->setModel(tmppromo.consulter());
+        QMessageBox::information(nullptr,QObject::tr("Modification"),QObject::tr("Promotion modifié"),QMessageBox::Ok);
+
+    }
+    else
+    {
+        QMessageBox::critical(nullptr,QObject::tr("Modification"),QObject::tr("Erreur"),QMessageBox::Ok);
+
+    }
 
 
-void MainWindow::on_lineEdit_numr_textChanged(const QString &arg1)
-{    QString num= ui->lineEdit_numr->text();
-
-    ui->tabler->setModel(tmptrajet.afficher3(num));
 }
 
-void MainWindow::on_lineEdit_numra_textChanged(const QString &arg1)
-{QString num= ui->lineEdit_numra->text();
+void MainWindow::on_pushButton_3_clicked()
+{
+    QString id= ui->lineEdit->text();
+    bool test=tmppromo.supprimerpromotion(id);
+    if (test)
+    {
+        ui->tableView->setModel(tmppromo.consulter());
+        QMessageBox::information(nullptr,QObject::tr("Supression"),QObject::tr("Promotion supprimé"),QMessageBox::Ok);
+    }
+    else
+    {
+        QMessageBox::critical(nullptr,QObject::tr("Supression"),QObject::tr("Promotion supprimé"),QMessageBox::Ok);
 
-    ui->tableView->setModel(tmptrajet.afficher4(num));
+    }
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    ui->tableView->setModel(tmppromo.consulter());
+}
+
+void MainWindow::on_lineEdit_3_returnPressed()
+{
+    QString a=ui->lineEdit_3->text();
+    ui->tableView->setModel(tmppromo.consulter2(a));
+
+
 
 }
+
+void MainWindow::on_pushButton_5_clicked()
+{
+     ui->tableView->setModel(tmppromo.consultertrie());
+}
+

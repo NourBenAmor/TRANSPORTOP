@@ -1,41 +1,42 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include"connexion.h"
-#include "trajet.h"
-#include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
-}
+#include <QMainWindow>
+#include<QSqlQuery>
+#include "promotion.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
-    void on_pb_ajouter_clicked();
+    void on_tableView_activated(const QModelIndex &index);
 
-    void on_pb_supprimer_clicked();
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
 
 
-   void on_pb_modifier_clicked();
+    void on_lineEdit_3_returnPressed();
 
+    void on_pushButton_5_clicked();
 
-
-   void on_pushButton_clicked();
-
-
-   void on_lineEdit_numr_textChanged(const QString &arg1);
-
-   void on_lineEdit_numra_textChanged(const QString &arg1);
+    void on_textBrowser_anchorClicked(const QUrl &arg1);
 
 private:
     Ui::MainWindow *ui;
-    Trajet tmptrajet;
+    Promotion tmppromo;
 };
-
 #endif // MAINWINDOW_H

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>img/mercedes_benz_bus_2016-t2.jpg</file>
+        <file>img/photo-1544620347-c4fd4a3d5957.jpg</file>
+    </qresource>
+</RCC>
