@@ -1,146 +1,167 @@
-#include "promotion.h"
-#include <QSqlQueryModel>
-#include <QObject>
-
+#include "promtion.h"
+#include "connexion.h"
 Promotion::Promotion()
 {
 
 }
-
-Promotion::Promotion(int id,QString nom,QString datedebut,QString datefin,QString contenu)
+Promotion::Promotion(QString c,QString n,QString p,QString m,QString a)
 {
-
-    this->id=id;
-    this->nom=nom;
-    this->date_debut=datedebut;
-    this->date_fin=datefin;
-    this ->contenu=contenu;
-}
-void Promotion::setid(int id)
-{
-    this->id=id;
-}
-void Promotion::setnom(QString nom)
-{
-    this->nom=nom;
-}
-void Promotion::setcontenu(QString contenu)
-{
-    this->contenu=contenu;
-}
-void Promotion::setdatefin(QString datefin)
-{
-    this->date_fin=datefin;
-}
-void Promotion::setdatedebut(QString datedebut)
-{
-    this->date_debut=datedebut;
-}
-int Promotion::getid()
-{
-    return this->id;
-
-}
-QString Promotion::getnom()
-{
-    return this->nom;
-}
-QString Promotion::getdatefin()
-{
-    return this->date_fin;
-}
-QString Promotion::getdatedebut()
-{
-    return this->date_debut;
-}
-QString Promotion::getcontenu()
-{
-    return this->contenu;
-}
+    id=c;
+    nom=n;
+    datedebut=p;
+    datefin=m;
+    contenu=a;
 
 
+}
+void Promotion::setid(QString c)
+{
+    id=c;
+}
+void Promotion::setnom(QString n)
+{
+    nom=n;
+}
+void Promotion::setdatedebut(QString p)
+{
+    datedebut=p;
+}
+void Promotion:: setdatefin(QString m)
+{
+    datefin=m;
+}
+void Promotion:: setcontenu(QString a)
+{
+    contenu=a;
+}
 
-bool Promotion::ajouterpromotion()
+QString Promotion:: getid()
+{
+    return  id;
+}
+QString Promotion:: getnom()
+{
+    return nom;
+}
+QString Promotion:: getdatedebut()
+{
+    return datedebut;
+}
+QString Promotion:: getdatefin()
+{
+    return datefin;
+}
+QString Promotion:: getcontenu()
+{
+    return contenu;
+}
+
+bool Promotion:: ajouter_Promotion()
 {
     QSqlQuery query;
-    QString idd=QString::number(id);
-    query.prepare("INSERT INTO promotion (id, nom, datedebut,datefin,contenu) VALUES (:id, :nom, :datedebut, :datefin,:contenu)");
-    query.bindValue(":id",idd);
+
+    query.prepare("INSERT INTO Promotion (id,nom,datedebut,datefin,contenu) " "VALUES (:id,:nom,:datedebut,:datefin,:contenu)");
+    query.bindValue(":id",id);
     query.bindValue(":nom",nom);
-    query.bindValue(":datedebut",date_debut);
-    query.bindValue(":datefin",date_fin);
+    query.bindValue(":datedebut",datedebut);
+    query.bindValue(":datefin", datefin);
     query.bindValue(":contenu",contenu);
-    return  query.exec();
+    return    query.exec();
 
 }
-bool Promotion::supprimerpromotion(QString id)
+
+
+bool Promotion::supprimer_Promotion()
+{
+
+    QSqlQuery query;
+    query.prepare("Delete from Promotion where id = :id ");
+    query.bindValue(":id",id);
+    return    query.exec();
+
+}
+QSqlQueryModel * Promotion:: afficher_Promotion()
+{QSqlQueryModel * model= new QSqlQueryModel();
+
+model->setQuery("select * from Promotion");
+model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
+model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("contenu"));
+    return model;
+}
+
+ bool Promotion::modifier_Promotion()
+ {      QSqlQuery query;
+        query.prepare("update Promotion set nom=:nom,datedebut=:datedebut,datefin=:datefin,contenu=:contenu where id=:id");
+        query.bindValue(":id",id);
+        query.bindValue(":nom",nom);
+        query.bindValue(":datedebut",datedebut);
+        query.bindValue(":datefin", datefin);
+        query.bindValue(":contenu", contenu);
+
+
+        return    query.exec();
+
+}
+
+QSqlQueryModel * Promotion:: afficher_list()
+{
+    QSqlQueryModel * model= new QSqlQueryModel();
+
+        model->setQuery("select id from Promotion");
+        model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+
+
+            return model;
+}
+void Promotion:: chercher()
+{    QSqlQuery query1;
+     query1.prepare("SELECT nom,datedebut,datefin,contenu FROM Promotion WHERE id =:id");
+     query1.bindValue(":id",id);
+     query1.exec();
+     while(query1.next())
+     {
+     nom = query1.value(0).toString();
+     datedebut = query1.value(1).toString();
+     datefin = query1.value(2).toString();
+     contenu = query1.value(3).toString();
+     }
+
+}
+QSqlQueryModel * Promotion:: recherche(QString valeur, int etat)
+{
+    QSqlQueryModel * model=new QSqlQueryModel();
+
+    QSqlQuery query;
+    if(etat==0)
+   { query.prepare("SELECT * FROM Promotion WHERE id LIKE :valeur order by id");}
+    else   { query.prepare("SELECT * FROM Promotion WHERE id LIKE :valeur order by id desc");}
+    valeur="%"+valeur+"%";
+    query.bindValue(":valeur",valeur);
+    query.exec();
+    model->setQuery(query);
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
+    model->setHeaderData(5, Qt::Horizontal, QObject::tr("contenu"));
+    return model;
+
+}
+bool Promotion::existe(QString id)
 {
     QSqlQuery query;
-           query.prepare("DELETE FROM PROMOTION WHERE id='"+id+"'");
-          query.addBindValue(id);
-          return  query.exec();
-}
-bool Promotion::modifierpromotion(QString nom,QString date_debut, QString date_fin, QString id,QString contenu){
-    QSqlQuery query;
-    query.prepare("UPDATE promotion set nom='"+nom+"' where id='"+id+"'");
-    query.bindValue(":nom",nom);
-    query.prepare("UPDATE promotion set date_debut='"+date_debut+"' where date_debut='"+date_debut+"'");
-    query.bindValue(":date_debut",date_debut);
-    query.prepare("UPDATE promotion set date_fin='"+date_fin+"' where date_debut='"+date_fin+"'");
-    query.bindValue(":date_fin",date_fin);
 
-    query.prepare("UPDATE promotion set contenu='"+contenu+"' where id='"+id+"'");
-    query.bindValue(":contenu",contenu);
-    return query.exec();
-}
-QSqlQueryModel *Promotion:: consulter()
-{
-    QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery("select * from promotion");
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("DATEDEBUT"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATEFIN"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("CONTENU"));
+    query.prepare("select * from promotion where id like :id");
+    QString id1="%"+id+"%";
+    query.bindValue(":id",id1);
+   if(query.exec())
+       return true;
+   else
+       return false;
 
-    return  model;
-
-}
-
-QSqlQueryModel *Promotion:: consulter2(QString a)
-{
-    QSqlQueryModel *model = new QSqlQueryModel();
-
-    if (a=="")
-    {
-        model->setQuery("select * from promotion order by id");
-
-    }
-    else
-    {
-        model->setQuery("select * from promotion where id='"+a+"' or nom='"+a+"'");
-    }
-
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("DATEDEBUT"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATEFIN"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("CONTENU"));
-
-    return  model;
-
-}
-QSqlQueryModel *Promotion::consultertrie()
-{
-    QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery("select * from promotion order by ID ");
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("DATEDEBUT"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATEFIN"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("CONTENU"));
-
-    return  model;
 
 
 }

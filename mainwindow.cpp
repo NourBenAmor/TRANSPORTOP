@@ -1,137 +1,160 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include<QSqlQueryModel>
-#include"promotion.h"
 #include "connexion.h"
+#include "promtion.h"
 #include<QMessageBox>
-#include<QDebug>
-#include <QTextBrowser>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //QPixmap pix(":/img/img/photo-1544620347-c4fd4a3d5957.jpg");
-    //ui->label_5->setPixmap(pix);
+    ui->tabemployer_2->setModel(tmp.afficher_Promotion());
+    ui->tabemployer_2->setModel(tmp.afficher_Promotion());
+    refresh();
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
-void MainWindow::on_tableView_activated(const QModelIndex &index)
+void MainWindow::refresh()
 {
-    QString id=ui->tableView->model()->data(index).toString();
-    QSqlQuery q;
-    q.prepare("SELECT * FROM promotion WHERE ID=?");
-    q.addBindValue(id);
-            if(q.exec())
-    {
-        while(q.next())
-        {
-            ui->lineEdit->setText(q.value(0).toString());
-            ui->lineEdit_2->setText(q.value(1).toString());
-            ui->dateEdit->setDate(q.value(2).toDate());
-            ui->dateEdit_2->setDate(q.value(3).toDate());
-            ui->lineEdit_4->setText(q.value(4).toString());
-         }
-
-
-    }
+  ui->tabemployer->setModel(tmp.afficher_Promotion());
+  ui->comboBox_3->setModel(tmp.afficher_list());
+  ui->comboBox_5->setModel(tmp.afficher_list());
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_ajouter_clicked()
 {
-    int id= ui->lineEdit->text().toInt();
-    QString nom=ui->lineEdit_2->text();
-    QString contenu=ui->lineEdit_4->text();
-    QString datedebut=ui->dateEdit->date().toString();
-    QString datefin=ui->dateEdit->date().toString();
-    if(ui->dateEdit->date() < ui->dateEdit_2->date())
-    {
-    Promotion e(id,nom,datedebut,datefin,contenu);
-    bool test=e.ajouterpromotion();
-    if (test)
-    {
-        ui->tableView->setModel(tmppromo.consulter());
-        QMessageBox::information(nullptr,QObject::tr("Ajout"),QObject::tr("Promotion ajouté"),QMessageBox::Ok);
-    }
-    else
-    {
-        QMessageBox::critical(nullptr,QObject::tr("Ajout"),QObject::tr("ID existe"),QMessageBox::Ok);
-
-
-
-    }
-
-
-    }
-    else
-       QMessageBox::critical(nullptr,QObject::tr("DAte "),QObject::tr("Impossible"),QMessageBox::Ok);
-
-
-
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    QString id= ui->lineEdit->text();
-    QString nom=ui->lineEdit_2->text();
+    QString id=ui->ID->text();
+    QString nom=ui->nom->text();
     QString datedebut=ui->dateEdit->date().toString();
     QString datefin=ui->dateEdit_2->date().toString();
-    QString contenu=ui->lineEdit_4->text();
-
-    bool test=tmppromo.modifierpromotion(nom,datedebut,datefin,id,contenu);
-    if (test)
+    QString contenu=ui->contenu->text();
+    if(id=="")
     {
-        ui->tableView->setModel(tmppromo.consulter());
-        QMessageBox::information(nullptr,QObject::tr("Modification"),QObject::tr("Promotion modifié"),QMessageBox::Ok);
+     QMessageBox::information(nullptr,QObject::tr("Ajout"),QObject::tr("Champ vide"),QMessageBox::Ok);}
+     else {
 
-    }
-    else
-    {
-        QMessageBox::critical(nullptr,QObject::tr("Modification"),QObject::tr("Erreur"),QMessageBox::Ok);
+     Promotion e(id,nom,datedebut,datefin,contenu);
+     if(!e.existe(e.getid()))
+         QMessageBox::information(nullptr,QObject::tr("Ajout"),QObject::tr("Promotion existe"),QMessageBox::Ok);
+     else {
 
-    }
+           bool test=e.ajouter_Promotion();
+          ui->tabemployer->setModel(tmp.afficher_Promotion());
+          ui->tabemployer_2->setModel(tmp.afficher_Promotion());
+          QMessageBox::information(nullptr,QObject::tr("Ajout"),QObject::tr("Promotion ajouté"),QMessageBox::Ok);
 
-
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-    QString id= ui->lineEdit->text();
-    bool test=tmppromo.supprimerpromotion(id);
-    if (test)
-    {
-        ui->tableView->setModel(tmppromo.consulter());
-        QMessageBox::information(nullptr,QObject::tr("Supression"),QObject::tr("Promotion supprimé"),QMessageBox::Ok);
-    }
-    else
-    {
-        QMessageBox::critical(nullptr,QObject::tr("Supression"),QObject::tr("Promotion supprimé"),QMessageBox::Ok);
 
     }
 }
-
-void MainWindow::on_pushButton_4_clicked()
-{
-    ui->tableView->setModel(tmppromo.consulter());
+    refresh();
 }
 
-void MainWindow::on_lineEdit_3_returnPressed()
-{
-    QString a=ui->lineEdit_3->text();
-    ui->tableView->setModel(tmppromo.consulter2(a));
 
+void MainWindow::on_supprimer_clicked()
+{
+    QString id = ui->sup->text();
+     Promotion e;
+     e.setid(id);
+     bool test=e.supprimer_Promotion();
+     if(test)
+   { ui->tabemployer->setModel(tmp.afficher_Promotion());
+         ui->tabemployer_2->setModel(tmp.afficher_Promotion());
+         QMessageBox::information(nullptr,QObject::tr("Modification"),QObject::tr("Promotion supprime"),QMessageBox::Ok);
+    refresh();}
+    else {
+        QMessageBox::information(nullptr,QObject::tr("Modification"),QObject::tr("Promotion non supprime"),QMessageBox::Ok);
+    }
+
+}
+
+
+
+void MainWindow::on_modifier_2_clicked()
+{
+    tmp.setnom(ui->nom1->text());
+    tmp.setdatedebut(ui->dateEdit_3->time().toString());
+    tmp.setdatefin(ui->dateEdit_4->time().toString());
+    tmp.setcontenu(ui->contenu1->text());
+
+    bool test=tmp.modifier_Promotion();
+ if(test){
+     ui->tabemployer_2->setModel(tmp.afficher_Promotion());
+    refresh();
+   }
+
+}
+
+
+
+void MainWindow::on_comboBox_3_activated(const QString &arg1)
+{
+    tmp.setid(arg1);
+    tmp.chercher();
+    ui->nom1->setText(tmp.getnom());
+    ui->dateEdit_3->setDate(QDate::fromString(tmp.getdatedebut()));
+    ui->dateEdit_4->setDate(QDate::fromString(tmp.getdatefin()));
+    ui->contenu1->setText(tmp.getcontenu());
+    refresh();
 
 
 }
 
-void MainWindow::on_pushButton_5_clicked()
+void MainWindow::on_comboBox_5_activated(const QString &arg1)
 {
-     ui->tableView->setModel(tmppromo.consultertrie());
+    ui->sup->setText(arg1);
+    refresh();
 }
+
+
+
+void MainWindow::on_lineEdit_19_textChanged(const QString &arg1)
+{
+    valeur=arg1;
+    ui->tabemployer->setModel(tmp.recherche(arg1,etat));
+refresh();
+}
+
+
+
+void MainWindow::on_checkBox_2_stateChanged(int arg1)
+{
+
+    etat=arg1;
+    ui->tabemployer->setModel(tmp.recherche(valeur,etat));
+    refresh();
+}
+
+
+
+
+
+void MainWindow::on_pushButton_7_clicked()
+{
+
+}
+
+
+
+void MainWindow::on_radioButton_3_clicked()
+{
+       etat= 0;
+       ui->tabemployer->setModel(tmp.recherche(valeur,etat));
+}
+
+void MainWindow::on_radioButton_4_clicked()
+{
+       etat = 1;
+       ui->tabemployer->setModel(tmp.recherche(valeur,etat));
+}
+
+
+
+
+
+
 
