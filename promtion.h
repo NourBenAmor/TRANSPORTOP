@@ -25,11 +25,15 @@ public:
     QSqlQueryModel * afficher_Promotion();
     QSqlQueryModel * afficher_list();
     void chercher();
+    QSqlQueryModel * Recherche_Avance();
+    QSqlQueryModel * afficher_tri_ID();
+    QSqlQueryModel * afficher_tri_ID_DESC();
     bool existe(QString);
     QSqlQueryModel * recherche(QString valeur, int etat);
 
 private:
     QString id,nom,datedebut,datefin,contenu;
+
 
 
 };

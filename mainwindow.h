@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 #include "promtion.h"
 #include <QMainWindow>
-
+#include <QtMultimedia>
+#include <QSystemTrayIcon>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -53,5 +54,7 @@ private:
     Promotion tmp;
     int etat=0;
     QString valeur ="";
+    QMediaPlayer *player;
+    QSystemTrayIcon *notifier;
 };
 #endif // MAINWINDOW_H

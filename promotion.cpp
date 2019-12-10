@@ -75,7 +75,7 @@ bool Promotion::supprimer_Promotion()
 {
 
     QSqlQuery query;
-    query.prepare("Delete from Promotion where id = :id ");
+    query.prepare("Delete from PROMOTION where id = :id ");
     query.bindValue(":id",id);
     return    query.exec();
 
@@ -83,7 +83,7 @@ bool Promotion::supprimer_Promotion()
 QSqlQueryModel * Promotion:: afficher_Promotion()
 {QSqlQueryModel * model= new QSqlQueryModel();
 
-model->setQuery("select * from Promotion");
+model->setQuery("select * from PROMOTION");
 model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
 model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
 model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
@@ -91,6 +91,47 @@ model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
 model->setHeaderData(3, Qt::Horizontal, QObject::tr("contenu"));
     return model;
 }
+
+
+QSqlQueryModel * Promotion:: afficher_tri_ID()
+{QSqlQueryModel * model= new QSqlQueryModel();
+
+model->setQuery("select * from PROMOTION order by id ");
+model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
+model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("contenu"));
+    return model;
+}
+
+QSqlQueryModel * Promotion:: afficher_tri_ID_DESC()
+{QSqlQueryModel * model= new QSqlQueryModel();
+
+model->setQuery("select * from PROMOTION order by id desc ");
+model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
+model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("contenu"));
+    return model;
+}
+
+
+QSqlQueryModel * Promotion:: Recherche_Avance()
+{QSqlQueryModel * model= new QSqlQueryModel();
+
+model->setQuery("select * from PROMOTION");
+model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("nom"));
+model->setHeaderData(2, Qt::Horizontal, QObject::tr("datedebut"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("datefin"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("contenu"));
+    return model;
+}
+
+
+
 
  bool Promotion::modifier_Promotion()
  {      QSqlQuery query;
@@ -110,7 +151,7 @@ QSqlQueryModel * Promotion:: afficher_list()
 {
     QSqlQueryModel * model= new QSqlQueryModel();
 
-        model->setQuery("select id from Promotion");
+        model->setQuery("select id from PROMOTION");
         model->setHeaderData(0, Qt::Horizontal, QObject::tr("id"));
 
 
