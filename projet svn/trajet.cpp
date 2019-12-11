@@ -9,16 +9,16 @@ datea="";
 dated="";
 
 }
-Trajet::Trajet(int num,QString stationa,QString stationd,QString datea,QString dated)
+Trajet::Trajet(int num,QString idBus,QString stationd,QString dated,QString stationa,QString datea)
 {
   this->num=num;
-  this->stationa=stationa;
+  this->IDBus=idBus;
   this->stationd=stationd;
-    this->datea=datea;
-    this->dated=dated;
-
-
+  this->stationa=stationa;
+  this->dated=dated;
+  this->datea=datea;
 }
+
 QString Trajet::get_stationa(){return  stationa;}
 QString Trajet::get_stationd(){return stationd;}
 QString Trajet::get_datea(){return datea;}
@@ -30,15 +30,14 @@ bool Trajet::ajouter()
 {
 QSqlQuery query;
 QString res= QString::number(num);
-query.prepare("INSERT INTO tabtrajet (num, stationa, stationd,datea,dated) "
-                    "VALUES (:num, :stationa, :stationd, :datea, :dated)");
+query.prepare("INSERT INTO tabtrajet (NUM, BUS,STATIOND,DATED,STATIONA,DATEA) "
+                    "VALUES (:num,:bus, :stationd, :dated, :stationa, :datea)");
 query.bindValue(":num", res);
-query.bindValue(":stationa", stationa);
+query.bindValue(":bus", IDBus);
 query.bindValue(":stationd", stationd);
-query.bindValue(":datea", datea);
 query.bindValue(":dated", dated);
-
-
+query.bindValue(":stationa", stationa);
+query.bindValue(":datea", datea);
 return    query.exec();
 }
 
@@ -47,10 +46,11 @@ QSqlQueryModel *Trajet::afficher()
 
 model->setQuery("select * from tabtrajet ORDER BY stationa  ");
 model->setHeaderData(0, Qt::Horizontal, QObject::tr("num"));
-model->setHeaderData(1, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("IDBus"));
 model->setHeaderData(2, Qt::Horizontal, QObject::tr("stationd"));
-model->setHeaderData(3, Qt::Horizontal, QObject::tr("datea"));
-model->setHeaderData(4, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(4, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(5, Qt::Horizontal, QObject::tr("datea"));
 
     return model;
 }
@@ -59,10 +59,11 @@ QSqlQueryModel *Trajet::afficher2()
 
 model->setQuery("select * from tabtrajet ORDER BY stationa  ");
 model->setHeaderData(0, Qt::Horizontal, QObject::tr("num"));
-model->setHeaderData(1, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("IDBus"));
 model->setHeaderData(2, Qt::Horizontal, QObject::tr("stationd"));
-model->setHeaderData(3, Qt::Horizontal, QObject::tr("datea"));
-model->setHeaderData(4, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(4, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(5, Qt::Horizontal, QObject::tr("datea"));
 
     return model;
 }
@@ -75,30 +76,12 @@ QSqlQueryModel *Trajet::afficher3(QString num)
 
 model->setQuery("select * from tabtrajet where num like '"+num+"%' ");
 
-
 model->setHeaderData(0, Qt::Horizontal, QObject::tr("num"));
-model->setHeaderData(1, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(1, Qt::Horizontal, QObject::tr("IDBus"));
 model->setHeaderData(2, Qt::Horizontal, QObject::tr("stationd"));
-model->setHeaderData(3, Qt::Horizontal, QObject::tr("datea"));
-model->setHeaderData(4, Qt::Horizontal, QObject::tr("dated"));
-
-    return model;
-}
-QSqlQueryModel *Trajet::afficher4(QString num)
-{
-    QSqlQueryModel * model= new QSqlQueryModel();
-
-
-
-
-model->setQuery("select * from tabtrajet where num like '"+num+"' ");
-
-
-model->setHeaderData(0, Qt::Horizontal, QObject::tr("num"));
-model->setHeaderData(1, Qt::Horizontal, QObject::tr("stationa "));
-model->setHeaderData(2, Qt::Horizontal, QObject::tr("stationd"));
-model->setHeaderData(3, Qt::Horizontal, QObject::tr("datea"));
-model->setHeaderData(4, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(3, Qt::Horizontal, QObject::tr("dated"));
+model->setHeaderData(4, Qt::Horizontal, QObject::tr("stationa "));
+model->setHeaderData(5, Qt::Horizontal, QObject::tr("datea"));
 
     return model;
 }
@@ -111,14 +94,15 @@ query.prepare("Delete from tabtrajet where num = :num ");
 query.bindValue(":num", res);
 return    query.exec();
 }
-bool Trajet::modifier(int num,QString stationa,QString stationd,QString datea,QString dated)
+bool Trajet::modifier(int num,QString IdBus,QString stationa,QString stationd,QString datea,QString dated)
 {QSqlQuery query;
     QString res= QString::number(num);
 
 
-    query.prepare("UPDATE tabtrajet SET STATIONA=:stationa, STATIOND=:stationd, DATEA= :datea, DATED= :dated WHERE NUM=:num");
+    query.prepare("UPDATE tabtrajet SET BUS=:bus , STATIOND=:stationd, DATED= :dated, STATIONA= :stationa , DATEA= :datea  WHERE NUM=:num");
 
     query.bindValue(":num", res);
+    query.bindValue(":bus", IdBus);
     query.bindValue(":stationa", stationa);
     query.bindValue(":stationd", stationd);
     query.bindValue(":datea", datea);

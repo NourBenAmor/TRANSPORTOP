@@ -1,117 +1,107 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "trajet.h"
-#include <QMessageBox>
-#include<QDebug>
-#include <QtDebug>
-#include<qdebug.h>
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-ui->setupUi(this);
-ui->tabtrajet->setModel(tmptrajet.afficher());
+    ui->setupUi(this);
+    this->setWindowIcon(QIcon("C:/Users/hp/Desktop/projet/Transport/Icone.PNG"));
+
+    QPixmap pix("C:/Users/hp/Desktop/EMPLOYE_ (1)/EMPLOYE_/t.png");
+     ui->label_3->setPixmap(pix.scaled(1000,1000,Qt::KeepAspectRatio));
+    QPixmap pix1("C:/Users/hp/Desktop/EMPLOYE_ (1)/EMPLOYE_/Capture.png");
+    ui->label_2->setPixmap(pix1.scaled(750,300,Qt::KeepAspectRatio));
+
+    //ui -> lineEdit_password->setEchoMode(QLineEdit::NoEcho);
+   // ui->label_3->setStyleSheet("color: white;");
+
+    ui->lineEdit_username->setStyleSheet("color: white;"
+                            "background-color: black;"
+                                         //"border-width: 5px;"
+                                         "border-radius: 10px;"
+                                         "font: bold 14px;"
+                                         );
+    ui->lineEdit_password->setStyleSheet("color: white;"
+                            "background-color: black;"
+                                         //"border-width: 5px;"
+                                         "border-radius: 10px;"
+                                         "font: bold 14px;"
+                                         );
 
 }
-
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::on_pb_ajouter_clicked()
+void MainWindow::on_pushButton_login_clicked()
 {
-    int num = ui->lineEdit_num->text().toInt();
-    QString stationa= ui->lineEdit_stationa->text();
-    QString stationd= ui->lineEdit_stationd->text();
-    QString datea= ui->lineEdit_datea->text();
-    QString dated= ui->lineEdit_dated->text();
-
-  Trajet e(num,stationa,stationd,datea,dated);
-  bool test=e.ajouter();
-  if(test)
-{ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-      ui->tablea->setModel(tmptrajet.afficher2());//refresh
-
-QMessageBox::information(nullptr, QObject::tr("Ajouter un trajet"),
-                  QObject::tr("trajet ajouté.\n"
-                              "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-  else
-      QMessageBox::critical(nullptr, QObject::tr("Ajouter un trajet"),
-                  QObject::tr("Erreur !.\n"
-                              "Click Cancel to exit."), QMessageBox::Cancel);
-
-
+    gestion r;
+    r.setModal(true);
+    r.exec();
 }
 
-void MainWindow::on_pb_supprimer_clicked()
-{
-int num = ui->lineEdit_numt->text().toInt();
-bool test=tmptrajet.supprimer(num);
-if(test)
-{ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-    ui->tablea->setModel(tmptrajet.afficher2());//refresh
+    /*
+    QSound bts("C:/Users/hp/Desktop/projet/Transport/sound.wav");
+    bts.play();
+    classEmployee e;
+    int poste;
+    QString username = ui->lineEdit_username->text();
+    QString password = ui ->lineEdit_password->text();
+    ui->lineEdit_password->clear();
+    ui->lineEdit_username->clear();
+    if (e.verifierCompte(username,password)==2||e.verifierCompte(username,password)==1)
+    {
+            poste=e.verifierStatut(username,password);
 
-    QMessageBox::information(nullptr, QObject::tr("Supprimer un trajet"),
-                QObject::tr("trajet supprimé.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
+        if (poste==0)
+        {
+            QMessageBox::information(this, "login","Admin");
+            Employe r;
+            r.setModal(true);
+            r.exec();
+        }
+        else if (poste==1)
+        {
+            QMessageBox::information(this, "login","Agent de Réservation");
+            Reservation r;
+            r.setModal(true);
+            r.exec();
+        }
+        else if (poste==2)
+        {
+            QMessageBox::information(this, "login","Agent Bus");
+            Bus r;
+            r.setModal(true);
+            r.exec();
+        }
+        else if (poste==3)
+        {
+            QMessageBox::information(this, "login","Agent Trajet");
+            gestionTrajet r;
+            r.setModal(true);
+            r.exec();
+        }
+        else if (poste==4)
+        {
+            QMessageBox::information(this, "login","Agent Trajet");
+            gestionTrajet r;
+            r.setModal(true);
+            r.exec();//promotion
+        }
+        else if (poste==5)
+        {
+            QMessageBox::information(this, "login","Agent de Convention");
+            gestion r;
+            r.setModal(true);
+            r.exec();
+        }
+    }
+    else
+    {
+       QMessageBox::warning(this, "login","username and password are not correct");
+    }
 }
-else
-    QMessageBox::critical(nullptr, QObject::tr("Supprimer un trajet"),
-                QObject::tr("Erreur !.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-
-}
-
-
-void MainWindow::on_pb_modifier_clicked()
-{
-    int num = ui->lineEdit_numm->text().toInt();
-    QString stationa= ui->lineEdit_stationam->text();
-    QString stationd= ui->lineEdit_stationdm->text();
-    QString datea= ui->lineEdit_dateam->text();
-    QString dated= ui->lineEdit_datedm->text();
-bool test=tmptrajet.modifier(num,stationa,stationd,datea,dated);
-
-if (test)
-  {  ui->tabtrajet->setModel(tmptrajet.afficher());//refresh
-    ui->tablea->setModel(tmptrajet.afficher2());//refresh
-
-QMessageBox::information(nullptr, QObject::tr("modifier un trajet"),
-                QObject::tr("trajet modidier.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-else
-    QMessageBox::critical(nullptr, QObject::tr("modifier un trajet"),
-                QObject::tr("Erreur !.\n"
-                            "Click Cancel to exit."), QMessageBox::Cancel);
-
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    ui->tablea->setModel(tmptrajet.afficher2());
-
-
-}
-
-
-
-void MainWindow::on_lineEdit_numr_textChanged(const QString &arg1)
-{    QString num= ui->lineEdit_numr->text();
-
-    ui->tabler->setModel(tmptrajet.afficher3(num));
-}
-
-void MainWindow::on_lineEdit_numra_textChanged(const QString &arg1)
-{QString num= ui->lineEdit_numra->text();
-
-    ui->tableView->setModel(tmptrajet.afficher4(num));
-
-}
+*/

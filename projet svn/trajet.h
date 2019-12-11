@@ -6,7 +6,7 @@
 class Trajet
 {public:
     Trajet();
-    Trajet(int,QString,QString,QString,QString);
+    Trajet(int,QString,QString,QString,QString,QString);
     QString get_dated();
     QString get_datea();
     QString get_stationd();
@@ -16,13 +16,11 @@ class Trajet
     QSqlQueryModel * afficher();
     QSqlQueryModel *afficher2();
     QSqlQueryModel *afficher3(QString);
-    QSqlQueryModel *afficher4(QString);
-
 bool supprimer(int);
-bool modifier(int ,QString ,QString ,QString ,QString );
+bool modifier(int ,QString,QString ,QString ,QString ,QString );
 
 private:
-    QString dated,datea,stationd,stationa;
+    QString dated,datea,stationd,stationa,IDBus;
     int num;
 };
 
